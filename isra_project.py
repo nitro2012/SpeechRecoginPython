@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Aug  8 22:04:11 2020
-
-@author: Tushar Garg
-"""
-
 import speech_recognition as sr
 import time
 import webbrowser
@@ -184,7 +177,7 @@ onmic = PhotoImage(file = 'MIC.png')
 _onmic = onmic.subsample(4,4)
 
 offmic = PhotoImage(file = 'offmic.png')
-_offmic = offmic.subsample(18,18)
+_offmic = offmic.subsample(4,4)
         
 def change_state(i) :
     if i==0 :
