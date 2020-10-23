@@ -499,8 +499,7 @@ def social_log(action,soc_media) :
                         text_speech('please download latest chrome driver to use this feature')
                         webbrowser.open_new_tab('https://chromedriver.chromium.org/downloads')
                     driver.get('https://www.instagram.com/accounts/login/')
-                    #userid_insta='coder.nitro2012@gmail.com'
-                    #pwd=nitro@2012'
+                    
                     from selenium.webdriver.common.keys import Keys
                     time.sleep(3)
                     emailelement=driver.find_element_by_name('username')
