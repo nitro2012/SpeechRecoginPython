@@ -85,19 +85,22 @@ def np():
         __thisEditMenu = Menu(__thisMenuBar, tearoff=0) 
         __thisHelpMenu = Menu(__thisMenuBar, tearoff=0) 
         
-        
+        lbl=Label(__root,text='mic off')
+        lbl.place(relx=0.6, rely=0.05, anchor = CENTER)
         # To add scrollbar 
         __thisScrollBar = Scrollbar(__thisTextArea)     
         __file = None
-    
+            
         def __init__(self,**kwargs): 
-    
-            # Set icon 
-            __btn=mic_button = Button(self.__root,text='MIC', command=lambda:self.change_state2(t2[0]))
-        
-        
+            __btn= Button(self.__root,text='MIC', command=lambda:self.change_state2(t2[0]))
+                
         
             __btn.place(relx=0.5, rely=0.05, anchor = CENTER)
+            
+            
+            
+            # Set icon 
+            
             try: 
                     self.__root.wm_iconbitmap("Notepad.ico") 
             except: 
@@ -116,7 +119,7 @@ def np():
                 pass
     
             # Set the window text 
-            self.__root.title("Untitled - Notepad") 
+            self.__root.title("Untitled - STT") 
     
             # Center the window 
             screenWidth = self.__root.winfo_screenwidth() 
@@ -176,7 +179,7 @@ def np():
                                         menu=self.__thisEditMenu)     
             
             # To create a feature of description of the notepad 
-            self.__thisHelpMenu.add_command(label="About Notepad", 
+            self.__thisHelpMenu.add_command(label="About speech-to-text editor", 
                                             command=self.__showAbout) 
             self.__thisMenuBar.add_cascade(label="Help", 
                                         menu=self.__thisHelpMenu) 
@@ -192,11 +195,13 @@ def np():
             if i==0 :
                 t2[0]=1
                 threading.Thread(target=self.hear2).start()
+                self.lbl.configure(text='mic on')
                 t2[0]=1
                 
             else : 
                 t2[0]=0
-                text_speech('mic off')
+                self.lbl.configure(text='mic off')
+                #text_speech('mic off')
         def hear2(self): 
              
             audio_data=''
@@ -239,7 +244,7 @@ def np():
                 
                 # Try to open the file 
                 # set the window title 
-                self.__root.title(os.path.basename(self.__file) + " - Notepad") 
+                self.__root.title(os.path.basename(self.__file) + " - STT Editor") 
                 self.__thisTextArea.delete(1.0,END) 
     
                 file = open(self.__file,"r") 
@@ -250,7 +255,7 @@ def np():
     
             
         def __newFile(self): 
-            self.__root.title("Untitled - Notepad") 
+            self.__root.title("Untitled - STT Editor") 
             self.__file = None
             self.__thisTextArea.delete(1.0,END) 
     
@@ -273,7 +278,7 @@ def np():
                     file.close() 
                     
                     # Change the window title 
-                    self.__root.title(os.path.basename(self.__file) + " - Notepad") 
+                    self.__root.title(os.path.basename(self.__file) + " - Note") 
                     
                 
             else: 
@@ -306,7 +311,16 @@ def text_speech(tex) :
     tts=gTTS(text=tex,lang='en')
     r=random.randint(1,100000)
     audio_file='audio-'+str(r)+'.mp3'
-    tts.save(audio_file)
+    try :
+        tts.save(audio_file)
+    except : 
+        tr=0
+        while tr<3 : 
+            try :
+                tts.save(audio_file)
+                break
+            except :
+                tr=tr+1
     playsound.playsound(audio_file)
     os.remove(audio_file)
     ass_text.insert(END,'\n'+'ISRA -'+tex)
@@ -317,7 +331,7 @@ def text_speech(tex) :
 def social_log(action,soc_media) :
     topost=''
     frend=''
-
+    from selenium.webdriver.common.keys import Keys
     if l[1]==1:        
         if soc_media=='facebook' :
             if action==1:
@@ -500,7 +514,7 @@ def social_log(action,soc_media) :
                         webbrowser.open_new_tab('https://chromedriver.chromium.org/downloads')
                     driver.get('https://www.instagram.com/accounts/login/')
                     
-                    from selenium.webdriver.common.keys import Keys
+                    
                     time.sleep(3)
                     emailelement=driver.find_element_by_name('username')
                     
@@ -552,7 +566,24 @@ def social_log(action,soc_media) :
                             text_speech('Please copy paste your message from israa')
                         
                         time.sleep(2)
-                        
+        elif soc_media=='twitter' :                 
+            if action==0: 
+                bot=webdriver.Chrome()
+                bot.get('https://twitter.com/login')
+                try:
+                    email = bot.find_element_by_name('session[username_or_email]')
+                    password = bot.find_element_by_name('session[password]')
+                except :
+                    time.sleep(3)
+                    email = bot.find_element_by_name('session[username_or_email]')
+                    password = bot.find_element_by_name('session[password]')
+                
+                email.clear()
+                password.clear()
+                email.send_keys(sid[6])
+                password.send_keys(sid[7])
+                password.send_keys(Keys.ENTER)
+                time.sleep(10)
                                  
                 
     else : 
@@ -595,7 +626,61 @@ def respond(audio_data) :
                 return 1
             else : 
                 webdo(audio_data)
+    elif audio_data1[0]=='play' : 
+        l[0]=0
+        t1='on youtube'
+        t2='play'
+        t1=audio_data.find(t1)
+        t2=audio_data.find(t2)+5
+        if 'video' in audio_data[1] : 
+            tmp=audio_data.find('of ')
+            tmp2=audio_data.find('on you')
+            if tmp2!=-1 : 
+                qery=audio_data[tmp:tmp2]
+                driver=webdriver.Chrome()
+                driver.get('https://www.youtube.com/results?search_query={qery1}'.format(qery1=qery))
+                try :
+                    lst=driver.find_element(By.XPATH,'//*[@id="contents"]/ytd-video-renderer[{n}]'.format(n=1))
+                    lst.click()
+                except : 
+                    driver.find_element(By.XPATH,'//*[@id="search"]').send_keys(audio_data)
+                return 0    
+            else : 
+                qery=audio_data[tmp:]
+                driver=webdriver.Chrome()
+                driver.get('https://www.youtube.com/results?search_query={qery1}'.format(qery1=qery))
+                try :
+                    lst=driver.find_element(By.XPATH,'//*[@id="contents"]/ytd-video-renderer[{n}]'.format(n=1))
+                    lst.click()
+                except : 
+                    driver.find_element(By.XPATH,'//*[@id="search"]').send_keys(audio_data)
+                return 0    
+        elif t2-t2!=0 : 
+            qery=audio_data[t2:t1]
+            driver=webdriver.Chrome()
+            driver.get('https://www.youtube.com/results?search_query={qery1}'.format(qery1=qery))
+            try :
+                    lst=driver.find_element(By.XPATH,'//*[@id="contents"]/ytd-video-renderer[{n}]'.format(n=1))
+                    lst.click()
+            except : 
+                    driver.find_element(By.XPATH,'//*[@id="search"]').send_keys(audio_data)
+            return 0
+        elif 'video' and 'youtube' in audio_data : 
+            qery=audio_data
+            driver=webdriver.Chrome()
+            driver.get('https://www.youtube.com/results?search_query={qery1}'.format(qery1=qery))
+            try :
+                    lst=driver.find_element(By.XPATH,'//*[@id="contents"]/ytd-video-renderer[{n}]'.format(n=1))
+                    lst.click()
+            except : 
+                    driver.find_element(By.XPATH,'//*[@id="search"]').send_keys(audio_data)
+            return 0        
+        else :
+            webdo(audio_data)
+            return 0
+            
                 
+            
     elif audio_data1[0]=='login' :
         if audio_data1[1]=='to' and (audio_data1[2] in social_media) :
             social_log(0,audio_data1[2])
