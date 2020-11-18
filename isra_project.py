@@ -11,6 +11,7 @@ import os
 import random
 import threading
 from tkinter import *
+from tkinter import filedialog
 from tkinter.ttk import *
 
 #instance of recogniser class
@@ -232,7 +233,7 @@ def np():
     
         def __openFile(self): 
             
-            self.__file = askopenfilename(defaultextension=".txt", 
+            self.__file = filedialog.askopenfilename(defaultextension=".txt", 
                                         filetypes=[("All Files","*.*"), 
                                             ("Text Documents","*.txt")]) 
     
@@ -263,7 +264,7 @@ def np():
     
             if self.__file == None: 
                 # Save as new file 
-                self.__file = asksaveasfilename(initialfile='Untitled.txt', 
+                self.__file = filedialog.asksaveasfilename(initialfile='Untitled.txt', 
                                                 defaultextension=".txt", 
                                                 filetypes=[("All Files","*.*"), 
                                                     ("Text Documents","*.txt")]) 
